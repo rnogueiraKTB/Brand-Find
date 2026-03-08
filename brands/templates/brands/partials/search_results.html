@@ -1,0 +1,31 @@
+{% if query %}
+    {% if results %}
+        <div>
+            {% for brand in results %}
+                <button
+                    type="button"
+                    class="result-item"
+                    hx-get="{% url 'brands:brand_detail' brand.pk %}"
+                    hx-target="#brand-detail"
+                    hx-swap="innerHTML"
+                    style="
+                        width: 100%;
+                        text-align: left;
+                        background: #ffffff;
+                        border: 1px solid #dde3ef;
+                        border-radius: 8px;
+                        padding: 10px 12px;
+                        margin-bottom: 8px;
+                        cursor: pointer;
+                    "
+                >
+                    {{ brand.brand }}
+                </button>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No brands found for "{{ query }}".</p>
+    {% endif %}
+{% else %}
+    <p class="hint">Start typing to search brands.</p>
+{% endif %}

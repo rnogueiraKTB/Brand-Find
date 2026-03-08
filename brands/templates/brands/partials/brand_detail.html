@@ -1,0 +1,24 @@
+<table style="width: 100%; border-collapse: collapse;">
+    <tbody>
+    <tr>
+        <th style="text-align: left; width: 180px; padding: 8px 6px; border-bottom: 1px solid #dde3ef;">Brand</th>
+        <td style="padding: 8px 6px; border-bottom: 1px solid #dde3ef;">{{ brand.brand }}</td>
+    </tr>
+    <tr>
+        <th style="text-align: left; padding: 8px 6px; border-bottom: 1px solid #dde3ef;">Inquire to</th>
+        <td style="padding: 8px 6px; border-bottom: 1px solid #dde3ef;">{{ brand.inquire_to }}</td>
+    </tr>
+    <tr>
+        <th style="text-align: left; padding: 8px 6px; border-bottom: 1px solid #dde3ef;">Notes</th>
+        <td style="padding: 8px 6px; border-bottom: 1px solid #dde3ef;">{{ brand.notes|default:"-" }}</td>
+    </tr>
+    <tr>
+        <th style="text-align: left; padding: 8px 6px; border-bottom: 1px solid #dde3ef;">Last changed on</th>
+        <td style="padding: 8px 6px; border-bottom: 1px solid #dde3ef;">{{ brand.last_changed_on|date:"Y-m-d" }}</td>
+    </tr>
+    <tr>
+        <th style="text-align: left; padding: 8px 6px;">Info received from</th>
+        <td style="padding: 8px 6px;">{{ brand.info_received_from }}</td>
+    </tr>
+    </tbody>
+</table>

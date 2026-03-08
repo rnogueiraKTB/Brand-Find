@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brand Lookup</title>
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f7f8fc;
+            --panel: #ffffff;
+            --text: #1d2433;
+            --muted: #5b6475;
+            --border: #dde3ef;
+            --accent: #0f6fc6;
+            --accent-soft: #e8f2fc;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at top right, #e7eefb, var(--bg) 50%);
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 920px;
+            margin: 40px auto;
+            padding: 0 16px;
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 10px 24px rgba(16, 42, 67, 0.07);
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-size: 1.9rem;
+        }
+
+        .hint {
+            margin: 0 0 20px;
+            color: var(--muted);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(15, 111, 198, 0.15);
+        }
+
+        .grid {
+            margin-top: 20px;
+            display: grid;
+            gap: 16px;
+            grid-template-columns: 1fr;
+        }
+
+        @media (min-width: 760px) {
+            .grid {
+                grid-template-columns: 1fr 1.4fr;
+            }
+        }
+
+        .box {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+            min-height: 220px;
+            background: #fcfdff;
+        }
+
+        .box-title {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 1.02rem;
+        }
+    </style>
+</head>
+<body>
+<main class="container">
+    <section class="panel">
+        <h1>Brand Lookup</h1>
+        <p class="hint">Search for a brand and select one result to view full details.</p>
+
+        <label for="brand-search">Search brand</label>
+        <input
+            id="brand-search"
+            class="search-input"
+            type="text"
+            name="q"
+            placeholder="Type a brand name..."
+            hx-get="{% url 'brands:live_search' %}"
+            hx-trigger="keyup changed delay:250ms"
+            hx-target="#search-results"
+            hx-swap="innerHTML"
+            autocomplete="off"
+        >
+
+        <div class="grid">
+            <section class="box">
+                <h2 class="box-title">Results</h2>
+                <div id="search-results">
+                    {% include "brands/partials/search_results.html" with query="" results=None %}
+                </div>
+            </section>
+
+            <section class="box">
+                <h2 class="box-title">Brand details</h2>
+                <div id="brand-detail">
+                    <p class="hint">Select a brand from the results to view details.</p>
+                </div>
+            </section>
+        </div>
+    </section>
+</main>
+</body>
+</html>
