@@ -19,7 +19,17 @@ def live_search(request):
         "query": query,
         "results": results,
     }
-    return render(request, "brands/partials/search_results.html", context)
+    return render(request, "brands/partials/brand_options.html", context)
+
+
+def selected_brand(request):
+    query = request.GET.get("q", "").strip()
+    brand = None
+
+    if query:
+        brand = BrandEntry.objects.filter(brand__iexact=query).first()
+
+    return render(request, "brands/partials/selection_panel.html", {"brand": brand})
 
 
 def brand_detail(request, pk):

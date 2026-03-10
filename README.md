@@ -12,7 +12,23 @@ A Django application to search brands with live results and view brand details.
   - Last changed on
   - Info received from
 - Admin back office for registered staff users to create/update/delete records.
+- Admin CSV upload for bulk brand import.
 - Docker-ready for VPS deployment (Hostinger compatible).
+
+## Admin CSV Upload
+
+In `/admin/brands/brandentry/`, use the `Upload CSV` button.
+
+Expected columns:
+
+`brand; inquire; last updated`
+
+Optional column:
+
+`notes`, `info from`
+
+- Accepted separators: `;` or `,`
+- Accepted dates for `last updated`: `YYYY-MM-DD`, `DD/MM/YYYY`, `DD-MM-YYYY`, `YYYY/MM/DD`
 
 ## Tech Stack
 

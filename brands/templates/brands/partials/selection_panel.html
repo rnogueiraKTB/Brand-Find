@@ -1,0 +1,22 @@
+{% if brand %}
+    <div class="grid">
+        <section class="box">
+            <h2 class="box-title">Results</h2>
+            {% if brand.logo %}
+                <div class="result-logo-frame">
+                    <img
+                        src="{{ brand.logo.url }}"
+                        alt="{{ brand.brand }} logo"
+                        class="result-logo"
+                    >
+                </div>
+            {% endif %}
+            <p style="margin: 0;">{{ brand.brand }}</p>
+        </section>
+
+        <section class="box">
+            <h2 class="box-title">Brand details</h2>
+            {% include "brands/partials/brand_detail.html" %}
+        </section>
+    </div>
+{% endif %}

@@ -1,0 +1,12 @@
+{% if results %}
+    {% for brand in results %}
+        <button type="button" class="dropdown-item" data-brand="{{ brand.brand }}">
+            {% if brand.logo %}
+                <img src="{{ brand.logo.url }}" alt="" class="dropdown-item-logo">
+            {% endif %}
+            <span>{{ brand.brand }}</span>
+        </button>
+    {% endfor %}
+{% elif query %}
+    <p class="dropdown-empty">No brands found for this search.</p>
+{% endif %}
