@@ -1,8 +1,11 @@
+{% load brand_extras %}
 {% if results %}
     {% for brand in results %}
         <button type="button" class="dropdown-item" data-brand="{{ brand.brand }}">
             {% if brand.logo %}
-                <img src="{{ brand.logo.url }}" alt="" class="dropdown-item-logo">
+                <img src="{{ brand.logo.url }}" alt="{{ brand.brand }} logo" class="dropdown-item-logo">
+            {% else %}
+                <span class="dropdown-item-placeholder">{{ brand.brand|brand_initials }}</span>
             {% endif %}
             <span>{{ brand.brand }}</span>
         </button>

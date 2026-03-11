@@ -1,22 +1,22 @@
+{% load brand_extras %}
 {% if brand %}
-    <div class="grid">
-        <section class="box">
-            <h2 class="box-title">Results</h2>
-            {% if brand.logo %}
-                <div class="result-logo-frame">
+    <section class="box search-result-card">
+        <h2 class="box-title">Search Result</h2>
+        <div class="search-result-content">
+            <div class="search-result-fields">
+                {% include "brands/partials/brand_detail.html" %}
+            </div>
+            <div class="result-logo-frame">
+                {% if brand.logo %}
                     <img
                         src="{{ brand.logo.url }}"
                         alt="{{ brand.brand }} logo"
                         class="result-logo"
                     >
-                </div>
-            {% endif %}
-            <p style="margin: 0;">{{ brand.brand }}</p>
-        </section>
-
-        <section class="box">
-            <h2 class="box-title">Brand details</h2>
-            {% include "brands/partials/brand_detail.html" %}
-        </section>
-    </div>
+                {% else %}
+                    <div class="result-logo-placeholder">{{ brand.brand|brand_initials }}</div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
 {% endif %}

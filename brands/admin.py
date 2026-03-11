@@ -1,6 +1,7 @@
 import csv
 from datetime import date, datetime
 from io import StringIO
+import re
 
 from django import forms
 from django.contrib import admin, messages
@@ -13,6 +14,57 @@ from django.utils.dateparse import parse_date
 
 from .models import BrandEntry
 
+INQUIRE_TO_CHOICES = (
+    ("Europe", "Europe"),
+    ("USA", "USA"),
+    ("China", "China"),
+    ("Decline", "Decline"),
+)
+
+
+class BrandEntryAdminForm(forms.ModelForm):
+    inquire_to = forms.MultipleChoiceField(
+        label="Inquire to",
+        choices=INQUIRE_TO_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+        required=True,
+        help_text="Select one or more destinations.",
+    )
+
+    class Meta:
+        model = BrandEntry
+        fields = "__all__"
+
+    @staticmethod
+    def _parse_inquire_to(value: str) -> list[str]:
+        if not value:
+            return []
+
+        valid_options = {choice for choice, _ in INQUIRE_TO_CHOICES}
+        tokens = [
+            token.strip()
+            for token in re.split(r"[,;/|]+", value)
+            if token and token.strip()
+        ]
+
+        normalized: list[str] = []
+        for token in tokens:
+            for option in valid_options:
+                if token.lower() == option.lower() and option not in normalized:
+                    normalized.append(option)
+                    break
+
+        return normalized
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            self.initial["inquire_to"] = self._parse_inquire_to(self.instance.inquire_to)
+
+    def clean_inquire_to(self) -> str:
+        values = self.cleaned_data.get("inquire_to", [])
+        return ", ".join(values)
+
 
 class BrandCsvUploadForm(forms.Form):
     csv_file = forms.FileField(
@@ -23,6 +75,7 @@ class BrandCsvUploadForm(forms.Form):
 
 @admin.register(BrandEntry)
 class BrandEntryAdmin(admin.ModelAdmin):
+    form = BrandEntryAdminForm
     list_display = ("brand", "logo", "inquire_to", "info_received_from", "last_changed_on")
     search_fields = ("brand", "inquire_to", "info_received_from", "notes")
     ordering = ("brand",)
