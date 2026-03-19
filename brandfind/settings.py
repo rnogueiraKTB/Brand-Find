@@ -3,11 +3,14 @@ Django settings for brandfind project.
 """
 
 import os
+import sys
 from pathlib import Path
 
 import dj_database_url
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
 
 
 def get_bool_env(name: str, default: bool) -> bool:
@@ -69,7 +72,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "brandfind.wsgi.application"
 
-database_url = os.getenv("DATABASE_URL")
+running_tests = "test" in sys.argv
+use_sqlite = get_bool_env("USE_SQLITE", False)
+if running_tests and get_bool_env("USE_SQLITE_FOR_TESTS", True):
+    use_sqlite = True
+
+database_url = None if use_sqlite else os.getenv("DATABASE_URL")
 if database_url:
     DATABASES = {
         "default": dj_database_url.parse(

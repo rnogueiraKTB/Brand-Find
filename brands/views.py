@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
+from django.db.models import F
 
 from .models import BrandEntry
 
@@ -28,6 +29,9 @@ def selected_brand(request):
 
     if query:
         brand = BrandEntry.objects.filter(brand__iexact=query).first()
+        if brand:
+            BrandEntry.objects.filter(pk=brand.pk).update(search_count=F("search_count") + 1)
+            brand.refresh_from_db(fields=["search_count"])
 
     return render(request, "brands/partials/selection_panel.html", {"brand": brand})
 

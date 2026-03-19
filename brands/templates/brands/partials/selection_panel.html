@@ -7,9 +7,9 @@
                 {% include "brands/partials/brand_detail.html" %}
             </div>
             <div class="result-logo-frame">
-                {% if brand.logo %}
+                {% if brand.logo_source %}
                     <img
-                        src="{{ brand.logo.url }}"
+                        src="{{ brand.logo_source }}"
                         alt="{{ brand.brand }} logo"
                         class="result-logo"
                     >

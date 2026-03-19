@@ -12,6 +12,7 @@ A Django application to search brands with live results and view brand details.
   - Last changed on
   - Info received from
 - Admin back office for registered staff users to create/update/delete records.
+- Logo in admin can be set via URL or uploaded image (only one source at a time).
 - Admin CSV upload for bulk brand import.
 - Docker-ready for VPS deployment (Hostinger compatible).
 
@@ -25,7 +26,9 @@ Expected columns:
 
 Optional column:
 
-`notes`, `info from`
+`notes`, `info from`, `logo` (URL)
+
+If the `logo` header is missing, the importer reads logo URL from column `F` (6th column).
 
 - Accepted separators: `;` or `,`
 - Accepted dates for `last updated`: `YYYY-MM-DD`, `DD/MM/YYYY`, `DD-MM-YYYY`, `YYYY/MM/DD`
@@ -47,19 +50,33 @@ Optional column:
 pip install -r requirements.txt
 ```
 
-3. Run migrations:
+3. If your `.env` has a Docker database URL (`...@db:5432`), force SQLite for this shell session:
+
+`cmd`:
+
+```bat
+set USE_SQLITE=True
+```
+
+`PowerShell`:
+
+```powershell
+$env:USE_SQLITE="True"
+```
+
+4. Run migrations:
 
 ```bash
 python manage.py migrate
 ```
 
-4. Create a superuser:
+5. Create a superuser:
 
 ```bash
 python manage.py createsuperuser
 ```
 
-5. Start the server:
+6. Start the server (default local address: `127.0.0.1:8002`):
 
 ```bash
 python manage.py runserver
@@ -81,8 +98,15 @@ docker compose exec web python manage.py createsuperuser
 ```
 
 4. Open:
-   - App: `http://YOUR_SERVER_IP:8000/`
-   - Admin: `http://YOUR_SERVER_IP:8000/admin/`
+   - App: `http://YOUR_SERVER_IP:8002/`
+   - Admin: `http://YOUR_SERVER_IP:8002/admin/`
+5. Follow logs (optional):
+
+```bash
+docker compose logs -f web
+```
+
+Uploaded images are persisted in a Docker volume (`media_data`) so they are not lost when recreating containers.
 
 ## Updating in Production
 
@@ -93,6 +117,19 @@ docker compose up --build -d
 ```
 
 Migrations and static collection run automatically at container startup.
+
+## Docker Troubleshooting
+
+If you see `password authentication failed for user` in `web` logs, your existing PostgreSQL volume was initialized with different credentials.
+
+To reset local Docker database state:
+
+```bash
+docker compose down -v
+docker compose up --build -d
+```
+
+Warning: `down -v` deletes PostgreSQL data from Docker volumes.
 
 ## Health Check
 
