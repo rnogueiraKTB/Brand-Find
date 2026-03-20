@@ -85,6 +85,7 @@ python manage.py runserver
 ## Docker Deployment (Hostinger VPS)
 
 1. Copy `.env.example` to `.env` and set secure values.
+   Make sure `ALLOWED_HOSTS` includes every hostname or IP you will use in the browser, and `CSRF_TRUSTED_ORIGINS` includes every full origin used for form posts (for example `https://brands.your-domain.com` and/or `http://YOUR_SERVER_IP:8002`).
 2. Build and start containers:
 
 ```bash
