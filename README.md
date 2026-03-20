@@ -85,7 +85,7 @@ python manage.py runserver
 ## Docker Deployment (Hostinger VPS)
 
 1. Copy `.env.example` to `.env` and set secure values.
-   Make sure `ALLOWED_HOSTS` includes every hostname or IP you will use in the browser, and `CSRF_TRUSTED_ORIGINS` includes every full origin used for form posts (for example `https://brands.ktb-apps.com` and/or `http://187.124.171.11:8002`).
+   Make sure `ALLOWED_HOSTS` includes every hostname or IP you will use in the browser, and `CSRF_TRUSTED_ORIGINS` includes every full origin used for form posts (for example `https://brands.ktb-apps.online` and/or `http://187.124.171.11:8002`).
 2. Build and start containers:
 
 ```bash
@@ -119,11 +119,11 @@ Uploaded images are persisted in a Docker volume (`media_data`) so they are not 
 
 ## HTTPS (Nginx + Let's Encrypt)
 
-These steps assume Ubuntu, the main portal on `ktb-apps.com`, and this app on `brands.ktb-apps.com`.
+These steps assume Ubuntu, the main portal on `ktb-apps.online`, and this app on `brands.ktb-apps.online`.
 
 1. Create these DNS `A` records pointing to your VPS IP:
-   - `@` -> `187.124.171.11` for `ktb-apps.com`
-   - `brands` -> `187.124.171.11` for `brands.ktb-apps.com`
+   - `@` -> `187.124.171.11` for `ktb-apps.online`
+   - `brands` -> `187.124.171.11` for `brands.ktb-apps.online`
 2. Install Nginx + Certbot:
 
 ```bash
@@ -140,8 +140,8 @@ sudo mkdir -p /var/www/letsencrypt
 4. Enable the HTTP config (temporary):
 
 ```bash
-sudo cp deploy/nginx/brands.ktb-apps.com.http.conf /etc/nginx/sites-available/brands.ktb-apps.com
-sudo ln -sf /etc/nginx/sites-available/brands.ktb-apps.com /etc/nginx/sites-enabled/brands.ktb-apps.com
+sudo cp deploy/nginx/brands.ktb-apps.online.http.conf /etc/nginx/sites-available/brands.ktb-apps.online
+sudo ln -sf /etc/nginx/sites-available/brands.ktb-apps.online /etc/nginx/sites-enabled/brands.ktb-apps.online
 sudo nginx -t
 sudo systemctl reload nginx
 ```
@@ -149,13 +149,13 @@ sudo systemctl reload nginx
 5. Issue the certificate:
 
 ```bash
-sudo certbot certonly --webroot -w /var/www/letsencrypt -d brands.ktb-apps.com
+sudo certbot certonly --webroot -w /var/www/letsencrypt -d brands.ktb-apps.online
 ```
 
 6. Switch to the HTTPS config:
 
 ```bash
-sudo cp deploy/nginx/brands.ktb-apps.com.conf /etc/nginx/sites-available/brands.ktb-apps.com
+sudo cp deploy/nginx/brands.ktb-apps.online.conf /etc/nginx/sites-available/brands.ktb-apps.online
 sudo nginx -t
 sudo systemctl reload nginx
 ```
@@ -163,7 +163,7 @@ sudo systemctl reload nginx
 7. Make sure your app is reachable on `127.0.0.1:8002` (Docker maps `8002:8000`).
    Once HTTPS is enabled behind Nginx, set `SECURE_SSL_REDIRECT=True`, `SESSION_COOKIE_SECURE=True`, and `CSRF_COOKIE_SECURE=True`.
 
-For the main portal, configure a separate Nginx site on the VPS with `server_name ktb-apps.com;` pointing to the `ktb-portal` container or port. The two apps should each have their own Nginx server block.
+For the main portal, configure a separate Nginx site on the VPS with `server_name ktb-apps.online;` pointing to the `ktb-portal` container or port. The two apps should each have their own Nginx server block.
 
 If your domain or port is different, update the files in `deploy/nginx/` before copying.
 
