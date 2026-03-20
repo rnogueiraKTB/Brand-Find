@@ -85,7 +85,7 @@ python manage.py runserver
 ## Docker Deployment (Hostinger VPS)
 
 1. Copy `.env.example` to `.env` and set secure values.
-   Make sure `ALLOWED_HOSTS` includes every hostname or IP you will use in the browser, and `CSRF_TRUSTED_ORIGINS` includes every full origin used for form posts (for example `https://brands.your-domain.com` and/or `http://YOUR_SERVER_IP:8002`).
+   Make sure `ALLOWED_HOSTS` includes every hostname or IP you will use in the browser, and `CSRF_TRUSTED_ORIGINS` includes every full origin used for form posts (for example `https://brands.ktb-apps.cloud` and/or `http://187.124.171.11:8002`).
 2. Build and start containers:
 
 ```bash
@@ -108,6 +108,7 @@ docker compose exec web python manage.py createsuperuser
 4. Open:
    - App: `http://YOUR_SERVER_IP:8002/`
    - Admin: `http://YOUR_SERVER_IP:8002/admin/`
+   - If you are using the direct server IP over plain HTTP, keep `SECURE_SSL_REDIRECT=False`, `SESSION_COOKIE_SECURE=False`, and `CSRF_COOKIE_SECURE=False`.
 5. Follow logs (optional):
 
 ```bash
@@ -158,6 +159,7 @@ sudo systemctl reload nginx
 ```
 
 7. Make sure your app is reachable on `127.0.0.1:8002` (Docker maps `8002:8000`).
+   Once HTTPS is enabled behind Nginx, set `SECURE_SSL_REDIRECT=True`, `SESSION_COOKIE_SECURE=True`, and `CSRF_COOKIE_SECURE=True`.
 
 If your domain or port is different, update the files in `deploy/nginx/` before copying.
 

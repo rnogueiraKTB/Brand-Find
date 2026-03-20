@@ -60,16 +60,17 @@ def get_origin_from_url(url: str | None) -> str | None:
 
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-change-me")
 DEBUG = get_bool_env("DEBUG", True)
+app_base_url = os.getenv("APP_BASE_URL")
 allowed_hosts = set(get_list_env("ALLOWED_HOSTS"))
 if not allowed_hosts:
     allowed_hosts = {"127.0.0.1", "localhost"}
-app_base_host = get_host_from_url(os.getenv("APP_BASE_URL"))
+app_base_host = get_host_from_url(app_base_url)
 if app_base_host:
     allowed_hosts.add(app_base_host)
 ALLOWED_HOSTS = sorted(allowed_hosts)
 
 csrf_trusted_origins = set(get_list_env("CSRF_TRUSTED_ORIGINS"))
-app_base_origin = get_origin_from_url(os.getenv("APP_BASE_URL"))
+app_base_origin = get_origin_from_url(app_base_url)
 if app_base_origin:
     csrf_trusted_origins.add(app_base_origin)
 CSRF_TRUSTED_ORIGINS = sorted(csrf_trusted_origins)
@@ -171,9 +172,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SECURE_SSL_REDIRECT = get_bool_env("SECURE_SSL_REDIRECT", True)
+    SESSION_COOKIE_SECURE = get_bool_env("SESSION_COOKIE_SECURE", False)
+    CSRF_COOKIE_SECURE = get_bool_env("CSRF_COOKIE_SECURE", False)
+    SECURE_SSL_REDIRECT = get_bool_env("SECURE_SSL_REDIRECT", False)
     SECURE_HSTS_SECONDS = get_int_env("SECURE_HSTS_SECONDS", 0)
     SECURE_HSTS_INCLUDE_SUBDOMAINS = get_bool_env(
         "SECURE_HSTS_INCLUDE_SUBDOMAINS", False
