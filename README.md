@@ -92,6 +92,13 @@ python manage.py runserver
 docker compose up --build -d
 ```
 
+If you change `.env` later, do not use only `docker compose restart`.
+Recreate the container so Docker reloads the environment:
+
+```bash
+docker compose up -d --build --force-recreate web
+```
+
 3. Create a superuser:
 
 ```bash
@@ -160,6 +167,12 @@ After pulling code changes:
 
 ```bash
 docker compose up --build -d
+```
+
+If the change was only in `.env`, still recreate the `web` container so the new variables are applied:
+
+```bash
+docker compose up -d --build --force-recreate web
 ```
 
 Migrations and static collection run automatically at container startup.
