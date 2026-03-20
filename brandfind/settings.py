@@ -5,6 +5,7 @@ Django settings for brandfind project.
 import os
 import sys
 from pathlib import Path
+from urllib.parse import urlparse
 
 import dj_database_url
 from dotenv import load_dotenv
@@ -20,15 +21,58 @@ def get_bool_env(name: str, default: bool) -> bool:
     return value.strip().lower() in {"1", "true", "yes", "on"}
 
 
+def get_int_env(name: str, default: int) -> int:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    try:
+        return int(value)
+    except ValueError:
+        return default
+
+
 def get_list_env(name: str) -> list[str]:
     raw_value = os.getenv(name, "")
     return [item.strip() for item in raw_value.split(",") if item.strip()]
 
 
+def get_host_from_url(url: str | None) -> str | None:
+    if not url:
+        return None
+    try:
+        parsed = urlparse(url)
+    except ValueError:
+        return None
+    return parsed.hostname
+
+
+def get_origin_from_url(url: str | None) -> str | None:
+    if not url:
+        return None
+    try:
+        parsed = urlparse(url)
+    except ValueError:
+        return None
+    if not parsed.scheme or not parsed.netloc:
+        return None
+    return f"{parsed.scheme}://{parsed.netloc}"
+
+
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-change-me")
 DEBUG = get_bool_env("DEBUG", True)
-ALLOWED_HOSTS = get_list_env("ALLOWED_HOSTS") or ["127.0.0.1", "localhost"]
-CSRF_TRUSTED_ORIGINS = get_list_env("CSRF_TRUSTED_ORIGINS")
+allowed_hosts = set(get_list_env("ALLOWED_HOSTS"))
+if not allowed_hosts:
+    allowed_hosts = {"127.0.0.1", "localhost"}
+app_base_host = get_host_from_url(os.getenv("APP_BASE_URL"))
+if app_base_host:
+    allowed_hosts.add(app_base_host)
+ALLOWED_HOSTS = sorted(allowed_hosts)
+
+csrf_trusted_origins = set(get_list_env("CSRF_TRUSTED_ORIGINS"))
+app_base_origin = get_origin_from_url(os.getenv("APP_BASE_URL"))
+if app_base_origin:
+    csrf_trusted_origins.add(app_base_origin)
+CSRF_TRUSTED_ORIGINS = sorted(csrf_trusted_origins)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -129,3 +173,9 @@ if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = get_bool_env("SECURE_SSL_REDIRECT", True)
+    SECURE_HSTS_SECONDS = get_int_env("SECURE_HSTS_SECONDS", 0)
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = get_bool_env(
+        "SECURE_HSTS_INCLUDE_SUBDOMAINS", False
+    )
+    SECURE_HSTS_PRELOAD = get_bool_env("SECURE_HSTS_PRELOAD", False)

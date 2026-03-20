@@ -108,6 +108,51 @@ docker compose logs -f web
 
 Uploaded images are persisted in a Docker volume (`media_data`) so they are not lost when recreating containers.
 
+## HTTPS (Nginx + Let's Encrypt)
+
+These steps assume Ubuntu and the subdomain `brands.ktb-apps.cloud`.
+
+1. Create a DNS `A` record for `brands.ktb-apps.cloud` pointing to your VPS IP.
+2. Install Nginx + Certbot:
+
+```bash
+sudo apt update
+sudo apt install -y nginx certbot python3-certbot-nginx
+```
+
+3. Create the ACME webroot:
+
+```bash
+sudo mkdir -p /var/www/letsencrypt
+```
+
+4. Enable the HTTP config (temporary):
+
+```bash
+sudo cp deploy/nginx/brands.ktb-apps.cloud.http.conf /etc/nginx/sites-available/brands.ktb-apps.cloud
+sudo ln -sf /etc/nginx/sites-available/brands.ktb-apps.cloud /etc/nginx/sites-enabled/brands.ktb-apps.cloud
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+5. Issue the certificate:
+
+```bash
+sudo certbot certonly --webroot -w /var/www/letsencrypt -d brands.ktb-apps.cloud
+```
+
+6. Switch to the HTTPS config:
+
+```bash
+sudo cp deploy/nginx/brands.ktb-apps.cloud.conf /etc/nginx/sites-available/brands.ktb-apps.cloud
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+7. Make sure your app is reachable on `127.0.0.1:8002` (Docker maps `8002:8000`).
+
+If your domain or port is different, update the files in `deploy/nginx/` before copying.
+
 ## Updating in Production
 
 After pulling code changes:
